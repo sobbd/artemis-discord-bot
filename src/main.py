@@ -75,18 +75,22 @@ async def create_project_embed(ctx: commands.Context, name: str, thumbnail_url: 
 
 @bot.command()
 async def announce(ctx: commands.Context, message: str):
-  if ctx.author.bot or not ctx.author.guild_permissions.administrator:
+  if ctx.author.guild is None:
+    await ctx.reply("This command is only usable within a server.")
+
+    return
+  elif ctx.author.bot or not ctx.author.guild_permissions.administrator:
     await ctx.reply("This command is only available to guild administrators!")
 
     return
-
-  ctx.send("@everyone {message}")
 
   # Attempt to delete the triggering message for convenience.
   try:
     ctx.message.delete()
   except:
     pass
+
+  await ctx.send(f"@everyone {message}")
 
 # Initialize and connect the bot.
 bot.run(token)
