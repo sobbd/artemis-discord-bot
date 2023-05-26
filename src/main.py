@@ -75,7 +75,7 @@ async def create_project_embed(ctx: commands.Context, name: str, thumbnail_url: 
 
 @bot.command()
 async def announce(ctx: commands.Context, message: str):
-  if ctx.author.guild is None:
+  if ctx.guild is None:
     await ctx.reply("This command is only usable within a server.")
 
     return
