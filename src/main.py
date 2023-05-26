@@ -14,6 +14,11 @@ async def on_ready():
 async def hello(ctx: commands.Context):
   await ctx.send("Hello, {0.author}!".format(ctx.message))
 
+@bot.command()
+async def ping(ctx):
+  latency = bot.latency * 1000  
+  await ctx.send(f'Pong! Latency: {latency:.2f}ms')
+
 # Load the auth token from the environment variables.
 token = os.environ.get("DISCORD_TOKEN")
 
