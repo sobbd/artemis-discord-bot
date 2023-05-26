@@ -4,13 +4,9 @@
 
 # General-Purpose Discord Bot
 
----
-
 A basic Discord bot framework that serves as an general-purpose design for any Discord bot application.
 
 # Requirements
-
----
 
 * Python Version >= 3.8.0
 
