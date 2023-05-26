@@ -3,7 +3,6 @@ import os
 import sys
 from discord.ext import commands
 
-
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=",", intents=intents)
 
@@ -15,7 +14,7 @@ async def on_ready():
 token = os.environ.get("DISCORD_TOKEN")
 
 if token is None:
-  print("The Discord bot token should be set as an environment variable named `DISCORD_TOKEN`")
+  print("The Discord bot auth token should be set as an environment variable named `DISCORD_TOKEN`")
   sys.exit(1)
 
 @bot.command()
@@ -28,7 +27,7 @@ async def ping(ctx: commands.Context):
   # it into milliseconds (ms).
   latency = bot.latency * 1000
 
-  await ctx.send(f"Pong! Latency: {latency:.2f}ms")
+  await ctx.send(f"Pong! Latency: {latency:.2f}ms.")
 
 @bot.command()
 async def userinfo(ctx: commands.Context):
@@ -62,6 +61,32 @@ async def serverinfo(ctx: commands.Context):
   embed.add_field(name="Creation date", value=creation_date, inline=False)
   embed.add_field(name="Verification level", value=ctx.guild.verification_level.name, inline=False)
   await ctx.send(embed=embed)
+
+@bot.command(name="create_project")
+async def create_project_embed(ctx: commands.Context, name: str, thumbnail_url: str, description: str, tech_stack: str, expertise_level: str, github_url: str):
+  embed = discord.Embed(title=name)
+
+  embed.set_thumbnail(url=thumbnail_url)
+  embed.add_field(name="Description", value=description, inline=False)
+  embed.add_field(name="Tech stack", value=tech_stack, inline=False)
+  embed.add_field(name="Recommended expertise level", value=expertise_level, inline=False)
+  embed.add_field(name="GitHub URL", value=github_url, inline=False)
+  await ctx.send(embed=embed)
+
+@bot.command()
+async def announce(ctx: commands.Context, message: str):
+  if ctx.author.bot or not ctx.author.guild_permissions.administrator:
+    await ctx.reply("This command is only available to guild administrators!")
+
+    return
+
+  ctx.send("@everyone {message}")
+
+  # Attempt to delete the triggering message for convenience.
+  try:
+    ctx.message.delete()
+  except:
+    pass
 
 # Initialize and connect the bot.
 bot.run(token)
