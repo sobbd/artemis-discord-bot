@@ -3,68 +3,65 @@ import os
 import sys
 from discord.ext import commands
 
+
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=",", intents=intents)
 
 @bot.event
 async def on_ready():
-    print("Logged in as {0.user}".format(bot))
-
-@bot.command()
-async def hello(ctx: commands.Context):
-    await ctx.send("Hello, {0.author}!".format(ctx.message))
-
-@bot.command()
-async def ping(ctx: commands.Context):
-    latency = bot.latency * 1000
-    await ctx.send(f'Pong! Latency: {latency:.2f}ms')
-
-@bot.command()
-async def userinfo(ctx: commands.Context):
-    user: discord.Member = ctx.author
-    username: str = user.name
-    discriminator: str = user.discriminator
-    user_id: int = user.id
-    roles: list[str] = [role.name for role in user.roles if role.name != "@everyone"]
-    nickname: str = user.nick
-    avatar_url: str = user.avatar_url
-    joined_date: str = user.joined_at.strftime("%Y-%m-%d %H:%M:%S")
-    creation_date: str = user.created_at.strftime("%Y-%m-%d %H:%M:%S")
-    embed = discord.Embed(title="User Information", color=discord.Color.green())
-    embed.set_thumbnail(url=avatar_url)
-    embed.add_field(name="Username", value=username, inline=False)
-    embed.add_field(name="Discriminator", value=discriminator, inline=False)
-    embed.add_field(name="User ID", value=user_id, inline=False)
-    embed.add_field(name="Roles", value=', '.join(roles), inline=False)
-    embed.add_field(name="Nickname", value=nickname, inline=False)
-    embed.add_field(name="Joined Date", value=joined_date, inline=False)
-    embed.add_field(name="Creation Date", value=creation_date, inline=False)
-    await ctx.send(embed=embed)
-
-@bot.command()
-async def serverinfo(ctx: commands.Context):
-    guild: discord.Guild = ctx.guild
-    server_name: str = guild.name
-    member_count: int = guild.member_count
-    server_owner: discord.Member = guild.owner
-    creation_date: str = guild.created_at.strftime("%Y-%m-%d %H:%M:%S")
-    verification_level: str = guild.verification_level.name
-    server_icon: str = guild.icon_url
-    embed = discord.Embed(title="Server Information", color=discord.Color.blue())
-    embed.set_thumbnail(url=server_icon)
-    embed.add_field(name="Server Name", value=server_name, inline=False)
-    embed.add_field(name="Member Count", value=member_count, inline=False)
-    embed.add_field(name="Server Owner", value=server_owner, inline=False)
-    embed.add_field(name="Creation Date", value=creation_date, inline=False)
-    embed.add_field(name="Verification Level", value=verification_level, inline=False)
-    await ctx.send(embed=embed)
+  print("Logged in as {0.user}".format(bot))
 
 # Load the auth token from the environment variables.
 token = os.environ.get("DISCORD_TOKEN")
 
 if token is None:
-    print("The Discord bot token should be set as an environment variable named `DISCORD_TOKEN`")
-    sys.exit(1)
+  print("The Discord bot token should be set as an environment variable named `DISCORD_TOKEN`")
+  sys.exit(1)
+
+@bot.command()
+async def hello(ctx: commands.Context):
+  await ctx.send("Hello, {0.author}!".format(ctx.message))
+
+@bot.command()
+async def ping(ctx: commands.Context):
+  # The latency is given in seconds. Multiply by 1000 to convert
+  # it into milliseconds (ms).
+  latency = bot.latency * 1000
+
+  await ctx.send(f"Pong! Latency: {latency:.2f}ms")
+
+@bot.command()
+async def userinfo(ctx: commands.Context):
+  # Use a for comprehension to collect all the roles of the author,
+  # excluding the `@everyone` role which would not be informative.
+  roles: list[str] = [role.name for role in ctx.author.roles if role.name != "@everyone"]
+
+  joined_date: str = ctx.author.joined_at.strftime("%Y-%m-%d %H:%M:%S")
+  creation_date: str = ctx.author.created_at.strftime("%Y-%m-%d %H:%M:%S")
+  embed = discord.Embed(title="User information", color=discord.Color.green())
+
+  embed.set_thumbnail(url=ctx.author.avatar)
+  embed.add_field(name="Username", value=ctx.author.name, inline=False)
+  embed.add_field(name="Discriminator", value=ctx.author.discriminator, inline=False)
+  embed.add_field(name="User ID", value=ctx.author.id, inline=False)
+  embed.add_field(name="Roles", value=", ".join(roles), inline=False)
+  embed.add_field(name="Nickname", value=ctx.author.nick, inline=False)
+  embed.add_field(name="Joined date", value=joined_date, inline=False)
+  embed.add_field(name="Creation date", value=creation_date, inline=False)
+  await ctx.send(embed=embed)
+
+@bot.command()
+async def serverinfo(ctx: commands.Context):
+  creation_date = ctx.guild.created_at.strftime("%Y-%m-%d %H:%M:%S")
+  embed = discord.Embed(title="Server information", color=discord.Color.blue())
+
+  embed.set_thumbnail(url=ctx.guild.icon)
+  embed.add_field(name="Server name", value=ctx.guild.name, inline=False)
+  embed.add_field(name="Member count", value=ctx.guild.member_count, inline=False)
+  embed.add_field(name="Server owner", value=ctx.guild.owner.mention, inline=False)
+  embed.add_field(name="Creation date", value=creation_date, inline=False)
+  embed.add_field(name="Verification level", value=ctx.guild.verification_level.name, inline=False)
+  await ctx.send(embed=embed)
 
 # Initialize and connect the bot.
 bot.run(token)
