@@ -9,6 +9,7 @@ bot = commands.Bot(command_prefix=",", intents=intents)
 @bot.event
 async def on_ready():
   print("Logged in as {0.user}".format(bot))
+  await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="A general-purpose bot, created for learning Python and as a collaborative project."))
 
 # Load the auth token from the environment variables.
 token = os.environ.get("DISCORD_TOKEN")
@@ -86,7 +87,7 @@ async def announce(ctx: commands.Context, message: str):
 
   # Attempt to delete the triggering message for convenience.
   try:
-    ctx.message.delete()
+    await ctx.message.delete()
   except:
     pass
 
