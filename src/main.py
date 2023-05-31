@@ -93,5 +93,9 @@ async def announce(ctx: commands.Context, message: str):
 
   await ctx.send(f"@everyone {message}")
 
+@bot.command()
+async def github(ctx: commands.Context):
+  await ctx.reply("https://github.com/sobbd/artemis-discord-bot")
+
 # Initialize and connect the bot.
 bot.run(token)
