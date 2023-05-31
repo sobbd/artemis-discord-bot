@@ -115,6 +115,6 @@ async def clear(ctx: commands.Context, amount: int):
 
   async for message in ctx.channel.history(limit=amount + 1):
     await message.delete()
-  
+
 # Initialize and connect the bot.
 bot.run(token)
