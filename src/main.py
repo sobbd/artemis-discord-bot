@@ -97,5 +97,14 @@ async def announce(ctx: commands.Context, message: str):
 async def github(ctx: commands.Context):
   await ctx.reply("https://github.com/sobbd/artemis-discord-bot")
 
+@bot.command()
+async def clear(ctx: commands.Context, amount: int):
+  if amount <= 0:
+    await ctx.reply("Please enter at least one message to delete.")
+    return
+
+  async for message in ctx.channel.history(limit=amount + 1):
+    await message.delete()
+  
 # Initialize and connect the bot.
 bot.run(token)
