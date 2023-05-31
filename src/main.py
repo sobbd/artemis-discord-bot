@@ -99,8 +99,18 @@ async def github(ctx: commands.Context):
 
 @bot.command()
 async def clear(ctx: commands.Context, amount: int):
+  if ctx.guild is None:
+    await ctx.reply("This command is only usable within a server.")
+
+    return
+  elif ctx.author.bot or not ctx.author.guild_permissions.administrator:
+    await ctx.reply("This command is only available to server administrators!")
+
+    return
+  
   if amount <= 0:
     await ctx.reply("Please enter at least one message to delete.")
+
     return
 
   async for message in ctx.channel.history(limit=amount + 1):
